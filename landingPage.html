@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOCOMORTIS — Survive or Die on the Last Train</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --rust:#C0401A;--rust2:#8B2A0E;--rust-g:rgba(192,64,26,.35);
+  --coal:#0C0B09;--smoke:#161410;--ash:#2A2824;--fog:#46433E;
+  --pale:#ADA79A;--cream:#E6DDC8;--warn:#C9980F;--green:#3A6B20;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--coal);color:var(--cream);font-family:'Barlow Condensed',sans-serif;overflow-x:hidden;}
+
+/* ══════════════════ NAV ══════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:56px;background:rgba(12,11,9,.92);
+  border-bottom:1px solid var(--ash);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;backdrop-filter:blur(8px);
+}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.2em;color:var(--rust);}
+.nav-links{display:flex;gap:32px;}
+.nav-links a{
+  font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;
+  color:var(--fog);text-decoration:none;text-transform:uppercase;
+  transition:color .2s;
+}
+.nav-links a:hover{color:var(--rust);}
+.nav-cta{
+  background:var(--rust);color:var(--cream);border:none;
+  padding:8px 20px;font-family:'Bebas Neue',sans-serif;font-size:16px;
+  letter-spacing:.1em;cursor:pointer;transition:opacity .2s;
+}
+.nav-cta:hover{opacity:.85;}
+
+/* ══════════════════ HERO ══════════════════ */
+#hero{
+  position:relative;min-height:100vh;padding-top:56px;
+  display:flex;align-items:center;overflow:hidden;background:var(--coal);
+}
+
+/* scrolling track background */
+#track-bg{
+  position:absolute;inset:0;overflow:hidden;pointer-events:none;
+}
+
+/* Animated rail lines going DOWN (top-view) */
+.rail-v{
+  position:absolute;top:-5%;width:3px;height:110%;
+  background:repeating-linear-gradient(to bottom,#1E1C18 0px,#1E1C18 48px,transparent 48px,transparent 80px);
+  animation:railScroll 1.4s linear infinite;
+}
+.rail-v.r1{left:calc(50% + 120px);}
+.rail-v.r2{left:calc(50% + 160px);}
+
+@keyframes railScroll{from{transform:translateY(-80px);}to{transform:translateY(0);}}
+
+/* ── HERO LAYOUT ── */
+.hero-inner{
+  position:relative;z-index:4;
+  width:100%;max-width:1400px;margin:0 auto;
+  padding:80px 48px;
+  display:grid;grid-template-columns:1fr 520px;
+  gap:60px;align-items:center;min-height:calc(100vh - 56px);
+}
+
+/* LEFT: text */
+.hero-text{}
+.eyebrow{
+  font-family:'Share Tech Mono',monospace;font-size:11px;
+  letter-spacing:.35em;color:var(--rust);text-transform:uppercase;
+  margin-bottom:20px;animation:fadeUp .8s .2s both;
+  display:flex;align-items:center;gap:12px;
+}
+.eyebrow::before{content:'';display:block;width:32px;height:1px;background:var(--rust);}
+
+h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(70px,9vw,130px);
+  line-height:.88;letter-spacing:.03em;
+  animation:fadeUp .8s .4s both;
+}
+h1 em{display:block;color:var(--rust);font-style:normal;
+  text-shadow:0 0 40px rgba(192,64,26,.7),0 0 80px rgba(192,64,26,.3);}
+
+.hero-sub{
+  margin-top:24px;font-size:17px;font-weight:300;line-height:1.75;
+  color:var(--pale);max-width:440px;
+  animation:fadeUp .8s .6s both;
+}
+
+.hero-stats{
+  display:flex;gap:32px;margin-top:36px;
+  animation:fadeUp .8s .75s both;
+}
+.hstat{display:flex;flex-direction:column;gap:2px;}
+.hstat-val{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--rust);line-height:1;}
+.hstat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--fog);}
+
+.hero-cta{
+  margin-top:40px;display:flex;gap:14px;align-items:center;
+  animation:fadeUp .8s .9s both;
+}
+.btn-p{
+  background:var(--rust);color:var(--cream);border:none;
+  padding:14px 36px;font-family:'Bebas Neue',sans-serif;font-size:20px;
+  letter-spacing:.12em;cursor:pointer;position:relative;overflow:hidden;
+  transition:transform .2s,box-shadow .2s;
+}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 28px var(--rust-g);}
+.btn-s{
+  background:transparent;color:var(--pale);
+  border:1px solid var(--fog);
+  padding:13px 26px;font-family:'Share Tech Mono',monospace;
+  font-size:12px;letter-spacing:.1em;cursor:pointer;
+  transition:border-color .2s,color .2s;
+}
+.btn-s:hover{border-color:var(--cream);color:var(--cream);}
+
+/* ══════════════════ TRAIN TOP-VIEW ══════════════════ */
+#train-wrap{
+  position:relative;height:620px;display:flex;align-items:center;justify-content:center;
+  animation:fadeUp .8s .5s both;
+}
+
+/* The scrolling ground / track canvas */
+#train-scene{
+  position:absolute;inset:0;overflow:hidden;border:1px solid var(--ash);
+  background:#0A0906;
+}
+
+/* top-view track */
+.tv-track{
+  position:absolute;top:0;bottom:0;
+  left:50%;transform:translateX(-50%);
+  width:120px;
+  background:repeating-linear-gradient(
+    to bottom,
+    #141210 0px,#141210 44px,
+    #1E1C18 44px,#1E1C18 80px
+  );
+  animation:tvScroll 1.1s linear infinite;
+}
+@keyframes tvScroll{from{background-position:0 0;}to{background-position:0 80px;}}
+
+/* rail lines on the track */
+.tv-rail{
+  position:absolute;top:0;bottom:0;width:4px;background:#252220;
+}
+.tv-rail.l{left:calc(50% - 44px);}
+.tv-rail.r{left:calc(50% + 40px);}
+
+/* sleepers */
+.tv-sleepers{
+  position:absolute;top:-80px;bottom:0;left:50%;transform:translateX(-50%);
+  width:120px;pointer-events:none;animation:tvScroll 1.1s linear infinite;
+}
+
+/* surrounding ground */
+.tv-ground-l,.tv-ground-r{
+  position:absolute;top:0;bottom:0;width:calc(50% - 60px);
+  background:linear-gradient(to right,#0A0906,#0E0D0A);
+}
+.tv-ground-l{left:0;}
+.tv-ground-r{right:0;background:linear-gradient(to left,#0A0906,#0E0D0A);}
+
+/* rocks & debris scrolling on sides */
+.tv-debris{
+  position:absolute;pointer-events:none;
+  animation:debrisScroll linear infinite;
+}
+@keyframes debrisScroll{from{transform:translateY(-100px);}to{transform:translateY(105%);}  }
+
+/* Train SVG top-view — static, centered on track */
+#train-svg{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  z-index:10;width:88px;
+  filter:drop-shadow(0 0 16px rgba(192,64,26,.5)) drop-shadow(0 0 4px rgba(192,64,26,.3));
+}
+
+/* Speed lines on sides of train */
+.speed-line{
+  position:absolute;top:0;bottom:0;
+  width:1px;background:linear-gradient(to bottom,transparent,rgba(200,160,80,.12),transparent);
+  animation:speedLine 0.5s linear infinite;
+}
+@keyframes speedLine{from{opacity:.8;}to{opacity:.2;}}
+
+/* HUD overlay */
+.train-hud{
+  position:absolute;inset:0;pointer-events:none;z-index:20;
+}
+.hud-corner{
+  position:absolute;width:20px;height:20px;
+  border-color:var(--rust);border-style:solid;opacity:.6;
+}
+.hud-corner.tl{top:12px;left:12px;border-width:1px 0 0 1px;}
+.hud-corner.tr{top:12px;right:12px;border-width:1px 1px 0 0;}
+.hud-corner.bl{bottom:12px;left:12px;border-width:0 0 1px 1px;}
+.hud-corner.br{bottom:12px;right:12px;border-width:0 1px 1px 0;}
+
+.hud-label{
+  position:absolute;font-family:'Share Tech Mono',monospace;font-size:9px;
+  letter-spacing:.1em;color:var(--fog);
+}
+.hud-label.tl{top:14px;left:36px;}
+.hud-label.tr{top:14px;right:36px;text-align:right;}
+.hud-label.bl{bottom:14px;left:36px;}
+.hud-label.br{bottom:14px;right:36px;text-align:right;}
+
+/* speed meter blink */
+.speed-val{color:var(--warn);animation:blink 1.8s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+/* ══════════════════ FEATURES ══════════════════ */
+#features{
+  background:var(--smoke);padding:100px 48px;
+  border-top:1px solid var(--ash);
+}
+.sec-head{text-align:center;margin-bottom:64px;}
+.sec-eyebrow{
+  font-family:'Share Tech Mono',monospace;font-size:11px;
+  letter-spacing:.35em;color:var(--rust);text-transform:uppercase;
+  margin-bottom:10px;
+}
+.sec-title{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,6vw,72px);
+  letter-spacing:.04em;
+}
+.feat-grid{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px;
+}
+.feat{
+  background:var(--coal);padding:36px 28px;position:relative;
+  transition:background .3s;
+}
+.feat::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--rust);transform:scaleX(0);transform-origin:left;
+  transition:transform .4s;
+}
+.feat:hover::after{transform:scaleX(1);}
+.feat:hover{background:#0F0E0C;}
+.feat-n{
+  position:absolute;top:28px;right:24px;
+  font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--ash);
+}
+.feat-icon{
+  width:44px;height:44px;border:1px solid var(--ash);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;font-size:20px;
+}
+.feat-t{
+  font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.06em;
+  margin-bottom:10px;
+}
+.feat-p{font-size:14px;font-weight:300;line-height:1.7;color:var(--pale);}
+
+/* ══════════════════ TRAILER / AMBIANCE ══════════════════ */
+#ambiance{
+  padding:100px 48px;background:var(--coal);
+  display:flex;align-items:center;gap:80px;max-width:1300px;margin:0 auto;
+}
+.amb-img{
+  flex:0 0 480px;height:340px;background:var(--smoke);
+  border:1px solid var(--ash);position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.amb-img svg{width:100%;height:100%;}
+.play-btn{
+  position:absolute;width:64px;height:64px;border-radius:50%;
+  border:2px solid var(--rust);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:5;transition:background .2s;
+  background:rgba(12,11,9,.6);
+}
+.play-btn:hover{background:var(--rust);}
+.play-btn svg{width:20px;height:20px;fill:var(--cream);margin-left:4px;}
+.amb-text{flex:1;}
+.amb-text p{
+  font-size:16px;font-weight:300;line-height:1.85;color:var(--pale);margin-bottom:18px;
+}
+
+/* ══════════════════ CONTACT & FORM ══════════════════ */
+#contact{
+  background:var(--smoke);border-top:1px solid var(--ash);
+  padding:100px 48px;position:relative;overflow:hidden;
+}
+#contact::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(to right,transparent,var(--rust),transparent);
+}
+
+.contact-grid{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;
+}
+
+/* Left: contact info */
+.contact-info .sec-eyebrow{text-align:left;}
+.contact-info h2{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,5vw,60px);
+  letter-spacing:.04em;margin-bottom:24px;
+}
+.contact-info p{
+  font-size:15px;font-weight:300;line-height:1.8;color:var(--pale);
+  margin-bottom:32px;
+}
+
+.contact-items{display:flex;flex-direction:column;gap:20px;}
+.contact-item{
+  display:flex;align-items:flex-start;gap:16px;
+  padding:16px 20px;background:var(--coal);border:1px solid var(--ash);
+  transition:border-color .2s;
+}
+.contact-item:hover{border-color:var(--rust);}
+.ci-icon{
+  width:36px;height:36px;flex-shrink:0;
+  border:1px solid var(--rust);display:flex;align-items:center;justify-content:center;
+  font-size:16px;color:var(--rust);
+}
+.ci-text{}
+.ci-label{
+  font-family:'Share Tech Mono',monospace;font-size:10px;
+  letter-spacing:.15em;color:var(--fog);text-transform:uppercase;
+  display:block;margin-bottom:4px;
+}
+.ci-val{font-size:15px;color:var(--cream);}
+
+/* Social links */
+.socials{display:flex;gap:12px;margin-top:32px;}
+.social-btn{
+  width:40px;height:40px;border:1px solid var(--ash);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--fog);
+  cursor:pointer;transition:border-color .2s,color .2s;
+  text-decoration:none;
+}
+.social-btn:hover{border-color:var(--rust);color:var(--rust);}
+
+/* Right: FORM */
+.contact-form{
+  background:var(--coal);border:1px solid var(--ash);padding:40px;
+}
+.form-title{
+  font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.08em;
+  margin-bottom:8px;
+}
+.form-sub{
+  font-family:'Share Tech Mono',monospace;font-size:10px;
+  letter-spacing:.12em;color:var(--fog);margin-bottom:32px;text-transform:uppercase;
+}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;}
+.form-group.full{grid-column:1/-1;}
+
+label{
+  font-family:'Share Tech Mono',monospace;font-size:10px;
+  letter-spacing:.15em;color:var(--fog);text-transform:uppercase;
+}
+input,textarea,select{
+  background:var(--smoke);border:1px solid var(--ash);color:var(--cream);
+  padding:12px 14px;font-family:'Barlow Condensed',sans-serif;font-size:15px;
+  font-weight:300;outline:none;transition:border-color .2s;
+  width:100%;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--rust);}
+input::placeholder,textarea::placeholder{color:var(--fog);}
+textarea{resize:vertical;min-height:110px;}
+select{appearance:none;cursor:pointer;}
+select option{background:var(--smoke);}
+
+.form-check{
+  display:flex;align-items:flex-start;gap:12px;
+  margin-bottom:24px;cursor:pointer;
+}
+.form-check input[type=checkbox]{
+  width:16px;height:16px;flex-shrink:0;margin-top:2px;
+  accent-color:var(--rust);cursor:pointer;
+}
+.form-check span{font-size:13px;font-weight:300;color:var(--pale);line-height:1.5;}
+
+.btn-submit{
+  width:100%;background:var(--rust);color:var(--cream);border:none;
+  padding:15px;font-family:'Bebas Neue',sans-serif;font-size:22px;
+  letter-spacing:.15em;cursor:pointer;transition:opacity .2s,transform .15s;
+  position:relative;overflow:hidden;
+}
+.btn-submit:hover{opacity:.9;transform:translateY(-1px);}
+.btn-submit:active{transform:translateY(1px);}
+
+/* success msg */
+.form-success{
+  display:none;text-align:center;padding:40px 20px;
+}
+.form-success.show{display:block;}
+.form-success-icon{
+  font-family:'Bebas Neue',sans-serif;font-size:56px;color:var(--rust);
+  margin-bottom:12px;
+}
+.form-success p{color:var(--pale);font-size:15px;font-weight:300;}
+
+/* ══════════════════ FINAL CTA ══════════════════ */
+#final{
+  padding:110px 48px;text-align:center;background:var(--coal);
+  position:relative;overflow:hidden;
+}
+#final::before{
+  content:'LOCOMORTIS';
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:220px;
+  color:rgba(255,255,255,.013);letter-spacing:.05em;pointer-events:none;white-space:nowrap;
+}
+#final h2{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,6vw,80px);
+  letter-spacing:.04em;margin-bottom:14px;position:relative;
+}
+#final p{
+  font-size:16px;font-weight:300;color:var(--pale);
+  margin-bottom:40px;letter-spacing:.06em;position:relative;
+}
+.stores{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;position:relative;}
+.store{
+  display:flex;align-items:center;gap:14px;
+  background:var(--ash);border:1px solid var(--fog);
+  padding:14px 28px;cursor:pointer;transition:border-color .2s,background .2s;
+}
+.store:hover{border-color:var(--rust);background:#2A2824;}
+.store-icon{font-size:26px;}
+.store-text{text-align:left;}
+.store-sub{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--fog);display:block;}
+.store-name{font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:.05em;display:block;line-height:1.1;}
+
+/* ══════════════════ FOOTER ══════════════════ */
+footer{
+  background:var(--smoke);border-top:1px solid var(--ash);
+  padding:28px 48px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+}
+.foot-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.2em;color:var(--rust);}
+footer p{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--fog);letter-spacing:.1em;}
+.foot-links{display:flex;gap:24px;}
+.foot-links a{
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;
+  color:var(--fog);text-decoration:none;transition:color .2s;
+}
+.foot-links a:hover{color:var(--rust);}
+
+/* ══════════════════ ANIMATIONS ══════════════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes smokePuff{
+  0%{transform:translate(0,0) scale(1);opacity:.3;}
+  100%{transform:translate(8px,-60px) scale(2);opacity:0;}
+}
+@keyframes wiggle{
+  0%,100%{transform:translate(-50%,-50%) rotate(0deg);}
+  25%{transform:translate(-50.4%,-50%) rotate(.3deg);}
+  75%{transform:translate(-49.6%,-50%) rotate(-.3deg);}
+}
+
+/* ══════════════════ RESPONSIVE ══════════════════ */
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;grid-template-rows:auto auto;gap:40px;padding:60px 24px;}
+  #train-wrap{height:380px;order:-1;}
+  .contact-grid{grid-template-columns:1fr;gap:48px;}
+  #ambiance{flex-direction:column;padding:60px 24px;gap:40px;}
+  .amb-img{flex:none;width:100%;height:220px;}
+  nav{padding:0 20px;}
+  .nav-links{display:none;}
+  footer{flex-direction:column;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">LOCOMORTIS</div>
+  <div class="nav-links">
+    <a href="#features">Gameplay</a>
+    <a href="#ambiance">Univers</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Rejoindre</button>
+</nav>
+
+<!-- ══════════════════════════════════ HERO ══════════════════════════════════ -->
+<section id="hero">
+  <div id="track-bg">
+    <div class="rail-v r1"></div>
+    <div class="rail-v r2"></div>
+  </div>
+
+  <div class="hero-inner">
+
+    <!-- LEFT TEXT -->
+    <div class="hero-text">
+      <div class="eyebrow">// Jeu de survie mobile — 2025</div>
+      <h1>LOCO<em>MORTIS</em></h1>
+      <p class="hero-sub">
+        Le monde est mort. Le train roule encore. À bord de ce dernier rempart d'acier, vous êtes responsable de tout — et de tout le monde.
+      </p>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-val">14</div><div class="hstat-label">Wagons</div></div>
+        <div class="hstat"><div class="hstat-val">200+</div><div class="hstat-label">Survivants</div></div>
+        <div class="hstat"><div class="hstat-val">∞</div><div class="hstat-label">Fins possibles</div></div>
+      </div>
+      <div class="hero-cta">
+        <button class="btn-p" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Être notifié</button>
+        <button class="btn-s">▶ Voir le trailer</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: TRAIN TOP VIEW -->
+    <div id="train-wrap">
+      <div id="train-scene">
+
+        <!-- Ground left/right of track -->
+        <div class="tv-ground-l" id="groundL"></div>
+        <div class="tv-ground-r" id="groundR"></div>
+
+        <!-- Scrolling track bed -->
+        <div class="tv-track"></div>
+
+        <!-- Rail lines -->
+        <div class="tv-rail l"></div>
+        <div class="tv-rail r"></div>
+
+        <!-- Debris on the sides (generated by JS) -->
+        <div id="debrisContainer"></div>
+
+        <!-- TRAIN SVG (top view) — redesigned as clearly a train -->
+        <svg id="train-svg" viewBox="0 0 100 500" xmlns="http://www.w3.org/2000/svg" style="animation:wiggle 0.45s ease-in-out infinite;width:100px;">
+
+          <defs>
+            <!-- Boiler cylinder gradient (top-lit) -->
+            <linearGradient id="boilerG" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#141210"/>
+              <stop offset="30%" stop-color="#2E2820"/>
+              <stop offset="60%" stop-color="#3A3228"/>
+              <stop offset="100%" stop-color="#1A1612"/>
+            </linearGradient>
+            <linearGradient id="roofG" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#1A1814"/>
+              <stop offset="40%" stop-color="#2A2620"/>
+              <stop offset="100%" stop-color="#161412"/>
+            </linearGradient>
+            <linearGradient id="cargoRoofG" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#141210"/>
+              <stop offset="50%" stop-color="#201E18"/>
+              <stop offset="100%" stop-color="#141210"/>
+            </linearGradient>
+          </defs>
+
+          <!-- ══ LOCOMOTIVE ══ -->
+          <!-- Cowcatcher / pilot (pointed front) -->
+          <polygon points="28,0 72,0 76,6 24,6" fill="#141210"/>
+          <polygon points="32,0 68,0 50,0" fill="#1A1410"/>
+          <!-- Front buffer beam -->
+          <rect x="24" y="6" width="52" height="5" rx="1" fill="#2A2018"/>
+          <!-- Headlight centred -->
+          <ellipse cx="50" cy="4" rx="7" ry="3" fill="#D4A017" opacity=".95" style="filter:drop-shadow(0 -3px 8px rgba(212,160,23,.9))"/>
+          <!-- Light cone -->
+          <polygon points="43,0 57,0 70,-18 30,-18" fill="rgba(212,160,23,0.07)"/>
+
+          <!-- Boiler (round cylinder look — narrow at front, wider mid) -->
+          <rect x="26" y="11" width="48" height="52" rx="5" fill="url(#boilerG)"/>
+          <!-- Boiler band rings (characteristic train detail) -->
+          <rect x="26" y="20" width="48" height="3" rx="1" fill="#0E0C0A" opacity=".8"/>
+          <rect x="26" y="30" width="48" height="3" rx="1" fill="#0E0C0A" opacity=".8"/>
+          <rect x="26" y="40" width="48" height="3" rx="1" fill="#0E0C0A" opacity=".8"/>
+          <rect x="26" y="50" width="48" height="3" rx="1" fill="#0E0C0A" opacity=".8"/>
+          <!-- Sand dome (top-view: small circle on boiler) -->
+          <ellipse cx="50" cy="27" rx="6" ry="5" fill="#1A1814" stroke="#0E0C0A" stroke-width="1"/>
+          <!-- Steam dome (larger) -->
+          <ellipse cx="50" cy="42" rx="8" ry="6" fill="#252018" stroke="#0E0C0A" stroke-width="1"/>
+          <!-- Smokestack (round, front quarter of boiler) -->
+          <ellipse cx="50" cy="15" rx="5" ry="4" fill="#0A0806" stroke="#1A1410" stroke-width="1"/>
+
+          <!-- Smoke puffs -->
+          <circle cx="50" cy="12" r="4" fill="rgba(70,60,40,0.28)" style="animation:smokePuff 1.0s 0.0s ease-out infinite"/>
+          <circle cx="50" cy="12" r="5" fill="rgba(50,45,30,0.20)" style="animation:smokePuff 1.0s 0.35s ease-out infinite"/>
+          <circle cx="50" cy="12" r="3" fill="rgba(80,65,45,0.22)" style="animation:smokePuff 1.0s 0.7s ease-out infinite"/>
+
+          <!-- Running boards (narrow ledges each side of boiler — key train feature) -->
+          <rect x="18" y="13" width="8" height="48" rx="1" fill="#1A1612"/>
+          <rect x="74" y="13" width="8" height="48" rx="1" fill="#1A1612"/>
+          <!-- Handrail on running boards -->
+          <line x1="22" y1="14" x2="22" y2="60" stroke="#2E2820" stroke-width="1.5"/>
+          <line x1="78" y1="14" x2="78" y2="60" stroke="#2E2820" stroke-width="1.5"/>
+
+          <!-- Drive wheels (large! characteristic of steam loco) -->
+          <!-- Front bogie wheels (small) -->
+          <circle cx="22" cy="24" r="6" fill="#0E0C0A" stroke="#2A2418" stroke-width="1.5"/>
+          <circle cx="22" cy="24" r="2.5" fill="#1A1612"/>
+          <circle cx="78" cy="24" r="6" fill="#0E0C0A" stroke="#2A2418" stroke-width="1.5"/>
+          <circle cx="78" cy="24" r="2.5" fill="#1A1612"/>
+          <!-- Main drive wheels (large) -->
+          <circle cx="22" cy="40" r="8" fill="#0A0806" stroke="#C0401A" stroke-width="1.5"/>
+          <circle cx="22" cy="40" r="3" fill="#1A1410"/>
+          <circle cx="78" cy="40" r="8" fill="#0A0806" stroke="#C0401A" stroke-width="1.5"/>
+          <circle cx="78" cy="40" r="3" fill="#1A1410"/>
+          <!-- Coupling rods between drive wheels (CRITICAL train feature) -->
+          <rect x="14" y="38" width="16" height="4" rx="1" fill="#2A2018" stroke="#C0401A" stroke-width=".5"/>
+          <rect x="70" y="38" width="16" height="4" rx="1" fill="#2A2018" stroke="#C0401A" stroke-width=".5"/>
+          <!-- Rear drive wheels -->
+          <circle cx="22" cy="54" r="8" fill="#0A0806" stroke="#C0401A" stroke-width="1.5"/>
+          <circle cx="22" cy="54" r="3" fill="#1A1410"/>
+          <circle cx="78" cy="54" r="8" fill="#0A0806" stroke="#C0401A" stroke-width="1.5"/>
+          <circle cx="78" cy="54" r="3" fill="#1A1410"/>
+          <!-- Connect rods -->
+          <rect x="14" y="52" width="16" height="4" rx="1" fill="#2A2018" stroke="#C0401A" stroke-width=".5"/>
+          <rect x="70" y="52" width="16" height="4" rx="1" fill="#2A2018" stroke="#C0401A" stroke-width=".5"/>
+
+          <!-- Cab (driver's compartment — boxy, at rear of loco) -->
+          <rect x="20" y="63" width="60" height="42" rx="2" fill="#2A2420"/>
+          <!-- Cab roof center ridge (top-view visible) -->
+          <rect x="36" y="63" width="28" height="42" fill="#242018"/>
+          <!-- Cab side windows (2 each side) -->
+          <rect x="20" y="68" width="14" height="14" rx="1" fill="#0E2030"/>
+          <rect x="20" y="86" width="14" height="14" rx="1" fill="#0E1A28"/>
+          <rect x="66" y="68" width="14" height="14" rx="1" fill="#0E2030"/>
+          <rect x="66" y="86" width="14" height="14" rx="1" fill="#0E1A28"/>
+          <!-- Window glints -->
+          <rect x="21" y="69" width="4" height="5" rx="1" fill="rgba(100,180,255,0.18)"/>
+          <rect x="67" y="69" width="4" height="5" rx="1" fill="rgba(100,180,255,0.18)"/>
+          <!-- Cab roof hatch -->
+          <rect x="40" y="70" width="20" height="28" rx="2" fill="#1E1C16" stroke="#2E2A22" stroke-width="1"/>
+          <!-- Rivets on cab -->
+          <circle cx="23" cy="66" r="1.5" fill="#3A3428"/>
+          <circle cx="77" cy="66" r="1.5" fill="#3A3428"/>
+          <circle cx="23" cy="102" r="1.5" fill="#3A3428"/>
+          <circle cx="77" cy="102" r="1.5" fill="#3A3428"/>
+          <!-- Tender connector -->
+          <rect x="38" y="105" width="24" height="6" rx="1" fill="#1A1612"/>
+
+          <!-- ══ TENDER (coal/water car directly behind loco) ══ -->
+          <rect x="22" y="113" width="56" height="52" rx="2" fill="#1E1C16"/>
+          <!-- Tender roof ridge -->
+          <rect x="34" y="113" width="32" height="52" fill="#191714"/>
+          <!-- Water tank shape (rounded top section) -->
+          <rect x="26" y="116" width="48" height="24" rx="3" fill="#161412" stroke="#252018" stroke-width="1"/>
+          <!-- Coal section (rear of tender, darker/rougher) -->
+          <rect x="26" y="142" width="48" height="20" rx="1" fill="#111008"/>
+          <!-- Coal texture dots -->
+          <circle cx="34" cy="150" r="2" fill="#0D0C09"/>
+          <circle cx="42" cy="146" r="1.5" fill="#0D0C09"/>
+          <circle cx="50" cy="153" r="2" fill="#0D0C09"/>
+          <circle cx="60" cy="148" r="1.5" fill="#0D0C09"/>
+          <circle cx="68" cy="154" r="2" fill="#0D0C09"/>
+          <!-- Tender wheels (smaller, 2 bogies) -->
+          <circle cx="30" cy="125" r="5" fill="#0A0806" stroke="#252018" stroke-width="1"/>
+          <circle cx="30" cy="125" r="2" fill="#161210"/>
+          <circle cx="70" cy="125" r="5" fill="#0A0806" stroke="#252018" stroke-width="1"/>
+          <circle cx="70" cy="125" r="2" fill="#161210"/>
+          <circle cx="30" cy="155" r="5" fill="#0A0806" stroke="#252018" stroke-width="1"/>
+          <circle cx="30" cy="155" r="2" fill="#161210"/>
+          <circle cx="70" cy="155" r="5" fill="#0A0806" stroke="#252018" stroke-width="1"/>
+          <circle cx="70" cy="155" r="2" fill="#161210"/>
+          <!-- Coupler -->
+          <rect x="38" y="163" width="24" height="7" rx="1" fill="#161210"/>
+          <rect x="44" y="165" width="12" height="3" rx="1" fill="#0E0C0A"/>
+
+          <!-- ══ WAGON 1 — Passenger car ══ -->
+          <rect x="20" y="172" width="60" height="82" rx="2" fill="#242018"/>
+          <!-- Long roof panels (top-view roof structure) -->
+          <rect x="26" y="172" width="48" height="82" fill="#1E1C16"/>
+          <!-- Roof center raised ridge (long strip) -->
+          <rect x="42" y="172" width="16" height="82" fill="#1A1814"/>
+          <!-- Clerestory ventilators (small bumps on center ridge) -->
+          <rect x="44" y="180" width="12" height="6" rx="1" fill="#141210"/>
+          <rect x="44" y="196" width="12" height="6" rx="1" fill="#141210"/>
+          <rect x="44" y="212" width="12" height="6" rx="1" fill="#141210"/>
+          <rect x="44" y="228" width="12" height="6" rx="1" fill="#141210"/>
+          <!-- Side windows (evenly spaced — this is what makes it look like a train!) -->
+          <rect x="20" y="180" width="8" height="10" rx="1" fill="#0E2030"/>
+          <rect x="20" y="196" width="8" height="10" rx="1" fill="#0E2030"/>
+          <rect x="20" y="212" width="8" height="10" rx="1" fill="#162030"/>
+          <rect x="20" y="228" width="8" height="10" rx="1" fill="#0E2030"/>
+          <rect x="72" y="180" width="8" height="10" rx="1" fill="#0E2030"/>
+          <rect x="72" y="196" width="8" height="10" rx="1" fill="#0E1828"/>
+          <rect x="72" y="212" width="8" height="10" rx="1" fill="#0E2030"/>
+          <rect x="72" y="228" width="8" height="10" rx="1" fill="#0E2030"/>
+          <!-- End platforms -->
+          <rect x="20" y="172" width="60" height="5" fill="#1A1814"/>
+          <rect x="20" y="249" width="60" height="5" fill="#1A1814"/>
+          <!-- Bogie trucks (2 per car — VERY important for train look) -->
+          <!-- Front bogie -->
+          <rect x="14" y="178" width="16" height="22" rx="2" fill="#161412"/>
+          <circle cx="22" cy="183" r="4" fill="#0E0C0A" stroke="#252018" stroke-width="1"/>
+          <circle cx="22" cy="195" r="4" fill="#0E0C0A" stroke="#252018" stroke-width="1"/>
+          <rect x="70" y="178" width="16" height="22" rx="2" fill="#161412"/>
+          <circle cx="78" cy="183" r="4" fill="#0E0C0A" stroke="#252018" stroke-width="1"/>
+          <circle cx="78" cy="195" r="4" fill="#0E0C0A" stroke="#252018" stroke-width="1"/>
+          <!-- Rear bogie -->
+          <rect x="14" y="230" width="16" height="22" rx="2" fill="#161412"/>
+          <circle cx="22" cy="235" r="4" fill="#0E0C0A" stroke="#252018" stroke-width="1"/>
+          <circle cx="22" cy="247" r="4" fill="#0E0C0A" stroke="#252018" stroke-width="1"/>
+          <rect x="70" y="230" width="16" height="22" rx="2" fill="#161412"/>
+          <circle cx="78" cy="235" r="4" fill="#0E0C0A" stroke="#252018" stroke-width="1"/>
+          <circle cx="78" cy="247" r="4" fill="#0E0C0A" stroke="#252018" stroke-width="1"/>
+          <!-- Rust stripe -->
+          <rect x="20" y="244" width="60" height="2" fill="#8B2A0E" opacity=".6"/>
+          <!-- Coupler -->
+          <rect x="40" y="253" width="20" height="7" rx="1" fill="#141210"/>
+
+          <!-- ══ WAGON 2 — Cargo / freight ══ -->
+          <rect x="20" y="262" width="60" height="82" rx="2" fill="#1C1A14"/>
+          <!-- Flat roof — no windows, just panels -->
+          <rect x="26" y="262" width="48" height="82" fill="#181612"/>
+          <!-- Cargo door seam (center split) -->
+          <line x1="50" y1="267" x2="50" y2="339" stroke="#0E0C0A" stroke-width="2"/>
+          <!-- Panel ribs (horizontal — like a real boxcar) -->
+          <rect x="20" y="276" width="60" height="2" fill="#111008"/>
+          <rect x="20" y="294" width="60" height="2" fill="#111008"/>
+          <rect x="20" y="312" width="60" height="2" fill="#111008"/>
+          <rect x="20" y="330" width="60" height="2" fill="#111008"/>
+          <!-- Corner posts (vertical reinforcement) -->
+          <rect x="20" y="262" width="4" height="82" fill="#141210"/>
+          <rect x="76" y="262" width="4" height="82" fill="#141210"/>
+          <!-- Rivets along sides -->
+          <circle cx="22" cy="270" r="1.5" fill="#282420"/>
+          <circle cx="22" cy="285" r="1.5" fill="#282420"/>
+          <circle cx="22" cy="300" r="1.5" fill="#282420"/>
+          <circle cx="22" cy="315" r="1.5" fill="#282420"/>
+          <circle cx="22" cy="330" r="1.5" fill="#282420"/>
+          <circle cx="78" cy="270" r="1.5" fill="#282420"/>
+          <circle cx="78" cy="285" r="1.5" fill="#282420"/>
+          <circle cx="78" cy="300" r="1.5" fill="#282420"/>
+          <circle cx="78" cy="315" r="1.5" fill="#282420"/>
+          <circle cx="78" cy="330" r="1.5" fill="#282420"/>
+          <!-- End walls -->
+          <rect x="20" y="262" width="60" height="5" fill="#141210"/>
+          <rect x="20" y="339" width="60" height="5" fill="#141210"/>
+          <!-- Rust damage patch -->
+          <path d="M32 295 L40 290 L38 305 L46 300" stroke="#8B2A0E" stroke-width="1.5" fill="none" opacity=".5"/>
+          <!-- Bogies -->
+          <rect x="14" y="268" width="16" height="22" rx="2" fill="#141210"/>
+          <circle cx="22" cy="273" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <circle cx="22" cy="285" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <rect x="70" y="268" width="16" height="22" rx="2" fill="#141210"/>
+          <circle cx="78" cy="273" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <circle cx="78" cy="285" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <rect x="14" y="320" width="16" height="22" rx="2" fill="#141210"/>
+          <circle cx="22" cy="325" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <circle cx="22" cy="337" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <rect x="70" y="320" width="16" height="22" rx="2" fill="#141210"/>
+          <circle cx="78" cy="325" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <circle cx="78" cy="337" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <!-- Coupler -->
+          <rect x="40" y="343" width="20" height="7" rx="1" fill="#141210"/>
+
+          <!-- ══ WAGON 3 — Passenger (damaged) ══ -->
+          <rect x="20" y="352" width="60" height="82" rx="2" fill="#221E18"/>
+          <rect x="26" y="352" width="48" height="82" fill="#1C1A14"/>
+          <rect x="42" y="352" width="16" height="82" fill="#181614"/>
+          <!-- Clerestory vents -->
+          <rect x="44" y="360" width="12" height="6" rx="1" fill="#121010"/>
+          <rect x="44" y="376" width="12" height="6" rx="1" fill="#121010"/>
+          <rect x="44" y="392" width="12" height="6" rx="1" fill="#121010"/>
+          <rect x="44" y="408" width="12" height="6" rx="1" fill="#121010"/>
+          <!-- Windows -->
+          <rect x="20" y="360" width="8" height="10" rx="1" fill="#0E2030"/>
+          <rect x="20" y="376" width="8" height="10" rx="1" fill="#1A1008"/>
+          <rect x="20" y="392" width="8" height="10" rx="1" fill="#0E2030"/>
+          <rect x="20" y="408" width="8" height="10" rx="1" fill="#0E2030"/>
+          <rect x="72" y="360" width="8" height="10" rx="1" fill="#0E2030"/>
+          <rect x="72" y="376" width="8" height="10" rx="1" fill="#0E2030"/>
+          <rect x="72" y="392" width="8" height="10" rx="1" fill="#1A0808"/>
+          <rect x="72" y="408" width="8" height="10" rx="1" fill="#0E2030"/>
+          <!-- Bullet holes / damage -->
+          <circle cx="60" cy="368" r="3" fill="#0C0A08" stroke="#3A1810" stroke-width="1"/>
+          <circle cx="32" cy="398" r="2" fill="#0C0A08" stroke="#3A1810" stroke-width="1"/>
+          <!-- End platforms -->
+          <rect x="20" y="352" width="60" height="5" fill="#1A1814"/>
+          <rect x="20" y="429" width="60" height="5" fill="#1A1814"/>
+          <!-- Bogies -->
+          <rect x="14" y="358" width="16" height="22" rx="2" fill="#141210"/>
+          <circle cx="22" cy="363" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <circle cx="22" cy="375" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <rect x="70" y="358" width="16" height="22" rx="2" fill="#141210"/>
+          <circle cx="78" cy="363" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <circle cx="78" cy="375" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <rect x="14" y="410" width="16" height="22" rx="2" fill="#141210"/>
+          <circle cx="22" cy="415" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <circle cx="22" cy="427" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <rect x="70" y="410" width="16" height="22" rx="2" fill="#141210"/>
+          <circle cx="78" cy="415" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <circle cx="78" cy="427" r="4" fill="#0E0C0A" stroke="#222018" stroke-width="1"/>
+          <!-- Tail end buffer + red light -->
+          <rect x="28" y="434" width="44" height="6" rx="1" fill="#1E1A14"/>
+          <rect x="36" y="436" width="12" height="4" rx="1" fill="#8B0A0A" style="filter:drop-shadow(0 2px 5px rgba(180,10,10,.8))"/>
+          <rect x="52" y="436" width="12" height="4" rx="1" fill="#8B0A0A" style="filter:drop-shadow(0 2px 5px rgba(180,10,10,.8))"/>
+
+        </svg>
+
+        <!-- HUD corners -->
+        <div class="train-hud">
+          <div class="hud-corner tl"></div>
+          <div class="hud-corner tr"></div>
+          <div class="hud-corner bl"></div>
+          <div class="hud-corner br"></div>
+          <div class="hud-label tl">VUE SUPÉRIEURE</div>
+          <div class="hud-label tr"><span class="speed-val">187 KM/H</span></div>
+          <div class="hud-label bl">WAGON 1–3 / 14</div>
+          <div class="hud-label br">DAY 23</div>
+        </div>
+
+        <!-- Speed lines -->
+        <div class="speed-line" style="left:28%;animation-delay:.1s;opacity:.15"></div>
+        <div class="speed-line" style="left:32%;animation-delay:.4s;opacity:.1"></div>
+        <div class="speed-line" style="left:68%;animation-delay:.2s;opacity:.15"></div>
+        <div class="speed-line" style="left:72%;animation-delay:.6s;opacity:.1"></div>
+
+      </div>
+    </div>
+    <!-- end train-wrap -->
+
+  </div><!-- hero-inner -->
+</section>
+
+<!-- ══════════════════════════════════ FEATURES ══════════════════════════════════ -->
+<section id="features">
+  <div class="sec-head">
+    <div class="sec-eyebrow">// Mécaniques de jeu</div>
+    <h2 class="sec-title">Survivre n'est pas suffisant</h2>
+  </div>
+  <div class="feat-grid">
+    <div class="feat">
+      <div class="feat-n">01</div>
+      <div class="feat-icon">⚙</div>
+      <div class="feat-t">Gestion des ressources</div>
+      <p class="feat-p">Charbon, eau, nourriture, médicaments. Chaque ressource compte. Mal gérer, c'est condamner le convoi.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-n">02</div>
+      <div class="feat-icon">☠</div>
+      <div class="feat-t">Menaces permanentes</div>
+      <p class="feat-p">Pillards, épidémies, mutineries. La menace vient de dehors — et de l'intérieur des wagons.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-n">03</div>
+      <div class="feat-icon">◈</div>
+      <div class="feat-t">Choix narratifs</div>
+      <p class="feat-p">Chaque station, chaque survivant rencontré change tout. La morale est un luxe. La survie est une nécessité.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-n">04</div>
+      <div class="feat-icon">🔧</div>
+      <div class="feat-t">Craft & Ingénierie</div>
+      <p class="feat-p">Répare les wagons, améliore la locomotive, improvise des systèmes de filtration. Le génie ou la débrouille.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════ AMBIANCE ══════════════════════════════════ -->
+<section style="background:var(--coal);padding:100px 48px 0;">
+<div id="ambiance">
+  <div class="amb-img">
+    <!-- Mini animated top-view scene -->
+    <svg width="100%" height="100%" viewBox="0 0 480 340" xmlns="http://www.w3.org/2000/svg">
+      <rect width="480" height="340" fill="#0A0906"/>
+      <!-- wasteland texture lines -->
+      <line x1="0" y1="60" x2="480" y2="60" stroke="#111" stroke-width="1"/>
+      <line x1="0" y1="120" x2="480" y2="120" stroke="#111" stroke-width="1"/>
+      <line x1="0" y1="180" x2="480" y2="180" stroke="#111" stroke-width="1"/>
+      <line x1="0" y1="240" x2="480" y2="240" stroke="#111" stroke-width="1"/>
+      <line x1="0" y1="300" x2="480" y2="300" stroke="#111" stroke-width="1"/>
+      <!-- track -->
+      <rect x="215" y="0" width="50" height="340" fill="#141210"/>
+      <rect x="220" y="0" width="3" height="340" fill="#1E1C18"/>
+      <rect x="257" y="0" width="3" height="340" fill="#1E1C18"/>
+      <!-- ruined structures on sides -->
+      <rect x="40" y="30" width="80" height="60" rx="2" fill="#1A1612" opacity=".8"/>
+      <rect x="55" y="20" width="18" height="18" rx="1" fill="#141210"/>
+      <rect x="330" y="80" width="100" height="80" rx="2" fill="#1A1612" opacity=".7"/>
+      <rect x="350" y="70" width="20" height="20" rx="1" fill="#141210"/>
+      <rect x="80" y="200" width="60" height="90" rx="2" fill="#1E1C16" opacity=".6"/>
+      <rect x="360" y="220" width="80" height="60" rx="2" fill="#1A1612" opacity=".7"/>
+      <!-- small train top-view silhouette -->
+      <rect x="224" y="140" width="32" height="60" rx="2" fill="#2A2420"/>
+      <rect x="228" y="136" width="24" height="8" rx="2" fill="#141210"/>
+      <rect x="224" y="80" width="32" height="56" rx="2" fill="#222018"/>
+      <rect x="228" y="76" width="24" height="6" rx="2" fill="#141210"/>
+      <!-- light cone from locomotive -->
+      <path d="M240 76 L200 0 L280 0 Z" fill="rgba(212,160,23,0.06)"/>
+    </svg>
+    <div class="play-btn">
+      <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 17,10 5,17"/></svg>
+    </div>
+  </div>
+  <div class="amb-text">
+    <div class="sec-eyebrow" style="text-align:left">// L'univers</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,4.5vw,56px);letter-spacing:.04em;margin-bottom:24px;">
+      S'arrêter,<br>c'est mourir
+    </h2>
+    <p class="amb-text p">La catastrophe a rendu la surface inhabitable. Froid extrême, radiations, factions armées qui se disputent les dernières ressources. Le train est la dernière structure sociale fonctionnelle.</p>
+    <p>Vous êtes le conducteur, le médecin, le négociateur, le juge. Des centaines de vies dépendent de chaque décision. Les rails s'étendent encore loin — mais jusqu'où&nbsp;?</p>
+    <div style="margin-top:32px;padding-top:32px;border-top:1px solid var(--ash);">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--rust);margin-bottom:12px;">// TRANSMISSION INTERCEPTÉE — JOUR 23</div>
+      <p style="font-size:14px;color:var(--fog);font-style:italic;line-height:1.8;">"Le convoi du Nord a perdu contact. Nous sommes peut-être les derniers. On continue."</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════ CONTACT ══════════════════════════════════ -->
+<section id="contact">
+  <div class="contact-grid">
+
+    <!-- LEFT: infos -->
+    <div class="contact-info">
+      <div class="sec-eyebrow">// Nous contacter</div>
+      <h2>Monter à bord</h2>
+      <p>
+        Vous êtes journaliste, influenceur, investisseur ou simplement passionné ? Rejoignez la liste de pré-lancement ou prenez contact directement.
+      </p>
+
+      <div class="contact-items">
+        <div class="contact-item">
+          <div class="ci-icon">✉</div>
+          <div class="ci-text">
+            <span class="ci-label">Email</span>
+            <span class="ci-val">contact@locomortis.game</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="ci-icon">◎</div>
+          <div class="ci-text">
+            <span class="ci-label">Presse & Partenariats</span>
+            <span class="ci-val">press@locomortis.game</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="ci-icon">⊞</div>
+          <div class="ci-text">
+            <span class="ci-label">Discord communauté</span>
+            <span class="ci-val">discord.gg/locomortis</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="socials">
+        <a class="social-btn" href="#">X</a>
+        <a class="social-btn" href="#">IN</a>
+        <a class="social-btn" href="#">TK</a>
+        <a class="social-btn" href="#">YT</a>
+        <a class="social-btn" href="#">IG</a>
+      </div>
+    </div>
+
+    <!-- RIGHT: form -->
+    <div class="contact-form">
+      <div id="formWrap">
+        <div class="form-title">Inscription</div>
+        <div class="form-sub">// pré-lancement & bêta test</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fname">Prénom</label>
+            <input type="text" id="fname" placeholder="Viktor"/>
+          </div>
+          <div class="form-group">
+            <label for="lname">Nom</label>
+            <input type="text" id="lname" placeholder="Morin"/>
+          </div>
+        </div>
+
+        <div class="form-group full">
+          <label for="email">Adresse e-mail *</label>
+          <input type="email" id="email" placeholder="vous@exemple.com" required/>
+        </div>
+
+        <div class="form-group full">
+          <label for="role">Vous êtes</label>
+          <select id="role">
+            <option value="">— Sélectionner —</option>
+            <option>Joueur / Fan</option>
+            <option>Journaliste / Blogueur</option>
+            <option>Influenceur / Créateur</option>
+            <option>Investisseur</option>
+            <option>Autre</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label for="msg">Message (optionnel)</label>
+          <textarea id="msg" placeholder="Votre message, demande de code bêta, collaboration…"></textarea>
+        </div>
+
+        <div class="form-check">
+          <input type="checkbox" id="optin"/>
+          <span>J'accepte de recevoir des nouvelles de LOCOMORTIS par e-mail. Désabonnement à tout moment.</span>
+        </div>
+
+        <button class="btn-submit" onclick="submitForm()">MONTER À BORD →</button>
+      </div>
+
+      <!-- Success state -->
+      <div class="form-success" id="formSuccess">
+        <div class="form-success-icon">✓</div>
+        <h3 style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.1em;margin-bottom:12px;">Bienvenue à bord</h3>
+        <p>Vous êtes enregistré. Vous serez parmi les premiers à monter dans le convoi.</p>
+        <div style="margin-top:24px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--rust);">// TRANSMISSION CONFIRMÉE</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="final">
+  <h2>Prêt à survivre ?</h2>
+  <p>Disponible bientôt sur iOS & Android</p>
+  <div class="stores">
+    <div class="store">
+      <div class="store-icon">🍎</div>
+      <div class="store-text">
+        <span class="store-sub">Bientôt sur</span>
+        <span class="store-name">App Store</span>
+      </div>
+    </div>
+    <div class="store">
+      <div class="store-icon">▶</div>
+      <div class="store-text">
+        <span class="store-sub">Bientôt sur</span>
+        <span class="store-name">Google Play</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">LOCOMORTIS</div>
+  <p>© 2025 Locomortis Studios — Tous droits réservés</p>
+  <div class="foot-links">
+    <a href="#">Politique de confidentialité</a>
+    <a href="#">Mentions légales</a>
+    <a href="#contact">Contact</a>
+  </div>
+</footer>
+
+<script>
+/* ── Debris on ground sides ── */
+(function(){
+  const c = document.getElementById('debrisContainer');
+  const scene = document.getElementById('train-scene');
+  const W = scene.offsetWidth || 500;
+  const H = scene.offsetHeight || 580;
+
+  for(let i=0;i<18;i++){
+    const isLeft = i < 9;
+    const d = document.createElement('div');
+    const size = 3 + Math.random()*7;
+    const left = isLeft
+      ? 8 + Math.random()*(W/2 - 80)
+      : (W/2 + 70) + Math.random()*(W/2 - 80);
+    const dur = 1.5 + Math.random()*2.5;
+    const delay = -Math.random()*dur;
+    const opacity = .15 + Math.random()*.25;
+    d.style.cssText = `
+      position:absolute;left:${left}px;top:-${size}px;
+      width:${size}px;height:${size}px;
+      background:#1A1812;border-radius:${Math.random()>0.5?'50%':'2px'};
+      opacity:${opacity};pointer-events:none;
+      animation:debrisScroll ${dur}s ${delay}s linear infinite;
+    `;
+    c.appendChild(d);
+  }
+})();
+
+/* ── Form submit ── */
+function submitForm(){
+  const email = document.getElementById('email').value.trim();
+  if(!email || !email.includes('@')){
+    document.getElementById('email').focus();
+    document.getElementById('email').style.borderColor='var(--rust)';
+    return;
+  }
+  document.getElementById('formWrap').style.display='none';
+  document.getElementById('formSuccess').classList.add('show');
+}
+
+/* ── Speed readout flicker ── */
+const spd = document.querySelector('.speed-val');
+setInterval(()=>{
+  const speeds=[183,185,187,188,190,186,184];
+  spd.textContent = speeds[Math.floor(Math.random()*speeds.length)]+' KM/H';
+},2200);
+
+/* ── Smoke puff style inject ── */
+const style=document.createElement('style');
+style.textContent=`
+@keyframes smokePuff{
+  0%{transform:translate(0,0) scale(1);opacity:.4;}
+  60%{opacity:.15;}
+  100%{transform:translate(${Math.random()>0.5?6:-4}px,-55px) scale(2.5);opacity:0;}
+}`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
