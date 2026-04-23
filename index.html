@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LOCOMORTIS — Survive or Die on the Last Train</title>
+<title>LOCOMORTIS — Roguelite mobile</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
@@ -320,6 +320,8 @@ h1 em{display:block;color:var(--rust);font-style:normal;
   transition:border-color .2s;
 }
 .contact-item:hover{border-color:var(--rust);}
+/* make anchor contact items behave like the div variant */
+a.contact-item{ text-decoration:none;color:inherit;display:flex;align-items:flex-start;gap:16px; }
 .ci-icon{
   width:36px;height:36px;flex-shrink:0;
   border:1px solid var(--rust);display:flex;align-items:center;justify-content:center;
@@ -488,7 +490,7 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--fog)
     <a href="#ambiance">Univers</a>
     <a href="#contact">Contact</a>
   </div>
-  <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Rejoindre</button>
+  <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Rejoindre notre communauté</button>
 </nav>
 
 <!-- ══════════════════════════════════ HERO ══════════════════════════════════ -->
@@ -502,19 +504,13 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--fog)
 
     <!-- LEFT TEXT -->
     <div class="hero-text">
-      <div class="eyebrow">// Jeu de survie mobile — 2025</div>
+      <div class="eyebrow">// Jeu roguelite de survie mobile — 2025</div>
       <h1>LOCO<em>MORTIS</em></h1>
       <p class="hero-sub">
         Le monde est mort. Le train roule encore. À bord de ce dernier rempart d'acier, vous êtes responsable de tout — et de tout le monde.
       </p>
-      <div class="hero-stats">
-        <div class="hstat"><div class="hstat-val">14</div><div class="hstat-label">Wagons</div></div>
-        <div class="hstat"><div class="hstat-val">200+</div><div class="hstat-label">Survivants</div></div>
-        <div class="hstat"><div class="hstat-val">∞</div><div class="hstat-label">Fins possibles</div></div>
-      </div>
       <div class="hero-cta">
-        <button class="btn-p" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Être notifié</button>
-        <button class="btn-s">▶ Voir le trailer</button>
+        <button class="btn-p" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Nous contacter</button>
       </div>
     </div>
 
@@ -807,9 +803,7 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--fog)
           <div class="hud-corner tr"></div>
           <div class="hud-corner bl"></div>
           <div class="hud-corner br"></div>
-          <div class="hud-label tl">VUE SUPÉRIEURE</div>
           <div class="hud-label tr"><span class="speed-val">187 KM/H</span></div>
-          <div class="hud-label bl">WAGON 1–3 / 14</div>
           <div class="hud-label br">DAY 23</div>
         </div>
 
@@ -829,87 +823,37 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--fog)
 <!-- ══════════════════════════════════ FEATURES ══════════════════════════════════ -->
 <section id="features">
   <div class="sec-head">
-    <div class="sec-eyebrow">// Mécaniques de jeu</div>
-    <h2 class="sec-title">Survivre n'est pas suffisant</h2>
+    <div class="sec-eyebrow">// Spécificités du jeu</div>
+    <h2 class="sec-title">Un Roguelite pensé pour des parties courtes et évolutives</h2>
   </div>
   <div class="feat-grid">
     <div class="feat">
       <div class="feat-n">01</div>
-      <div class="feat-icon">⚙</div>
-      <div class="feat-t">Gestion des ressources</div>
-      <p class="feat-p">Charbon, eau, nourriture, médicaments. Chaque ressource compte. Mal gérer, c'est condamner le convoi.</p>
+      <div class="feat-icon">⭮</div>
+      <div class="feat-t">Gameplay innovant</div>
+      <p class="feat-p">Un gameplay Roguelite comme peu vu auparavant sur mobile. Effectuez vos sorties pour récolter des ressources afin d'améliorer votre personnage et la locomotive.</p>
     </div>
     <div class="feat">
       <div class="feat-n">02</div>
-      <div class="feat-icon">☠</div>
-      <div class="feat-t">Menaces permanentes</div>
-      <p class="feat-p">Pillards, épidémies, mutineries. La menace vient de dehors — et de l'intérieur des wagons.</p>
+      <div class="feat-icon">⏱</div>
+      <div class="feat-t">Temps de jeu variable</div>
+      <p class="feat-p">Choisissez le temps de vos parties par rapport à vos temps de trajet. Les parties peuvent durer 3, 5, 10 minutes ! Mais attention à revenir à temps.</p>
     </div>
     <div class="feat">
       <div class="feat-n">03</div>
       <div class="feat-icon">◈</div>
-      <div class="feat-t">Choix narratifs</div>
-      <p class="feat-p">Chaque station, chaque survivant rencontré change tout. La morale est un luxe. La survie est une nécessité.</p>
+      <div class="feat-t">Jouable sans connexion</div>
+      <p class="feat-p">Aucune connexion internet n'est requise pour prendre du plaisir. Pas de problème avec les tunnels ou zone rurale.</p>
     </div>
     <div class="feat">
       <div class="feat-n">04</div>
-      <div class="feat-icon">🔧</div>
-      <div class="feat-t">Craft & Ingénierie</div>
-      <p class="feat-p">Répare les wagons, améliore la locomotive, improvise des systèmes de filtration. Le génie ou la débrouille.</p>
+      <div class="feat-icon">$</div>
+      <div class="feat-t">Gratuit</div>
+      <p class="feat-p">Le jeu est disponible gratuitement sur toutes les plateformes. Possibilité d'acheter des points in-game pour des types de gameplays variés et des skins exclusifs.</p>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════ AMBIANCE ══════════════════════════════════ -->
-<section style="background:var(--coal);padding:100px 48px 0;">
-<div id="ambiance">
-  <div class="amb-img">
-    <!-- Mini animated top-view scene -->
-    <svg width="100%" height="100%" viewBox="0 0 480 340" xmlns="http://www.w3.org/2000/svg">
-      <rect width="480" height="340" fill="#0A0906"/>
-      <!-- wasteland texture lines -->
-      <line x1="0" y1="60" x2="480" y2="60" stroke="#111" stroke-width="1"/>
-      <line x1="0" y1="120" x2="480" y2="120" stroke="#111" stroke-width="1"/>
-      <line x1="0" y1="180" x2="480" y2="180" stroke="#111" stroke-width="1"/>
-      <line x1="0" y1="240" x2="480" y2="240" stroke="#111" stroke-width="1"/>
-      <line x1="0" y1="300" x2="480" y2="300" stroke="#111" stroke-width="1"/>
-      <!-- track -->
-      <rect x="215" y="0" width="50" height="340" fill="#141210"/>
-      <rect x="220" y="0" width="3" height="340" fill="#1E1C18"/>
-      <rect x="257" y="0" width="3" height="340" fill="#1E1C18"/>
-      <!-- ruined structures on sides -->
-      <rect x="40" y="30" width="80" height="60" rx="2" fill="#1A1612" opacity=".8"/>
-      <rect x="55" y="20" width="18" height="18" rx="1" fill="#141210"/>
-      <rect x="330" y="80" width="100" height="80" rx="2" fill="#1A1612" opacity=".7"/>
-      <rect x="350" y="70" width="20" height="20" rx="1" fill="#141210"/>
-      <rect x="80" y="200" width="60" height="90" rx="2" fill="#1E1C16" opacity=".6"/>
-      <rect x="360" y="220" width="80" height="60" rx="2" fill="#1A1612" opacity=".7"/>
-      <!-- small train top-view silhouette -->
-      <rect x="224" y="140" width="32" height="60" rx="2" fill="#2A2420"/>
-      <rect x="228" y="136" width="24" height="8" rx="2" fill="#141210"/>
-      <rect x="224" y="80" width="32" height="56" rx="2" fill="#222018"/>
-      <rect x="228" y="76" width="24" height="6" rx="2" fill="#141210"/>
-      <!-- light cone from locomotive -->
-      <path d="M240 76 L200 0 L280 0 Z" fill="rgba(212,160,23,0.06)"/>
-    </svg>
-    <div class="play-btn">
-      <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 17,10 5,17"/></svg>
-    </div>
-  </div>
-  <div class="amb-text">
-    <div class="sec-eyebrow" style="text-align:left">// L'univers</div>
-    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,4.5vw,56px);letter-spacing:.04em;margin-bottom:24px;">
-      S'arrêter,<br>c'est mourir
-    </h2>
-    <p class="amb-text p">La catastrophe a rendu la surface inhabitable. Froid extrême, radiations, factions armées qui se disputent les dernières ressources. Le train est la dernière structure sociale fonctionnelle.</p>
-    <p>Vous êtes le conducteur, le médecin, le négociateur, le juge. Des centaines de vies dépendent de chaque décision. Les rails s'étendent encore loin — mais jusqu'où&nbsp;?</p>
-    <div style="margin-top:32px;padding-top:32px;border-top:1px solid var(--ash);">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--rust);margin-bottom:12px;">// TRANSMISSION INTERCEPTÉE — JOUR 23</div>
-      <p style="font-size:14px;color:var(--fog);font-style:italic;line-height:1.8;">"Le convoi du Nord a perdu contact. Nous sommes peut-être les derniers. On continue."</p>
-    </div>
-  </div>
-</div>
-</section>
 
 <!-- ══════════════════════════════════ CONTACT ══════════════════════════════════ -->
 <section id="contact">
@@ -920,87 +864,58 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--fog)
       <div class="sec-eyebrow">// Nous contacter</div>
       <h2>Monter à bord</h2>
       <p>
-        Vous êtes journaliste, influenceur, investisseur ou simplement passionné ? Rejoignez la liste de pré-lancement ou prenez contact directement.
+        Hésitez pas à nous contacter pour nous poser des questions, et rejoindre la communauté pour être informé du développement et discutez avec notre équipe
       </p>
 
       <div class="contact-items">
-        <div class="contact-item">
-          <div class="ci-icon">✉</div>
-          <div class="ci-text">
-            <span class="ci-label">Email</span>
-            <span class="ci-val">contact@locomortis.game</span>
-          </div>
-        </div>
-        <div class="contact-item">
-          <div class="ci-icon">◎</div>
-          <div class="ci-text">
-            <span class="ci-label">Presse & Partenariats</span>
-            <span class="ci-val">press@locomortis.game</span>
-          </div>
-        </div>
-        <div class="contact-item">
+        <a class="contact-item" href="https://discord.gg/VbCGd45FVQ" target="_blank" rel="noopener noreferrer">
           <div class="ci-icon">⊞</div>
           <div class="ci-text">
             <span class="ci-label">Discord communauté</span>
             <span class="ci-val">discord.gg/locomortis</span>
           </div>
-        </div>
-      </div>
-
-      <div class="socials">
-        <a class="social-btn" href="#">X</a>
-        <a class="social-btn" href="#">IN</a>
-        <a class="social-btn" href="#">TK</a>
-        <a class="social-btn" href="#">YT</a>
-        <a class="social-btn" href="#">IG</a>
+        </a>
       </div>
     </div>
 
     <!-- RIGHT: form -->
     <div class="contact-form">
       <div id="formWrap">
-        <div class="form-title">Inscription</div>
-        <div class="form-sub">// pré-lancement & bêta test</div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="fname">Prénom</label>
-            <input type="text" id="fname" placeholder="Viktor"/>
+        <div class="form-title">Contact</div>
+        <form action="https://api.web3forms.com/submit" method="POST">
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fname">Prénom</label>
+              <input type="text" id="fname" name="first_name" placeholder="Viktor" required/>
+            </div>
+            <div class="form-group">
+              <label for="lname">Nom</label>
+              <input type="text" id="lname" name="last_name" placeholder="Morin"/>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="lname">Nom</label>
-            <input type="text" id="lname" placeholder="Morin"/>
+
+          <div class="form-group full">
+            <label for="email">Adresse e-mail *</label>
+            <input type="email" id="email" name="email" placeholder="vous@exemple.com" required/>
           </div>
+
+          <div class="form-group full">
+            <label for="msg">Message (optionnel)</label>
+            <textarea id="msg" name="message" placeholder="Votre message, demande de code bêta, collaboration…"></textarea>
+          </div>
+
+          <!-- Web3Forms access key (hidden) -->
+          <input type="hidden" name="access_key" value="4e32d8ed-4286-4d42-95d3-7f6b88798940">
+
+          <div class="form-check">
+            <input type="checkbox" id="optin"/>
+            <span>J'accepte de recevoir des nouvelles de LOCOMORTIS par e-mail. Désabonnement à tout moment.</span>
         </div>
 
-        <div class="form-group full">
-          <label for="email">Adresse e-mail *</label>
-          <input type="email" id="email" placeholder="vous@exemple.com" required/>
-        </div>
+          </form>
 
-        <div class="form-group full">
-          <label for="role">Vous êtes</label>
-          <select id="role">
-            <option value="">— Sélectionner —</option>
-            <option>Joueur / Fan</option>
-            <option>Journaliste / Blogueur</option>
-            <option>Influenceur / Créateur</option>
-            <option>Investisseur</option>
-            <option>Autre</option>
-          </select>
-        </div>
-
-        <div class="form-group full">
-          <label for="msg">Message (optionnel)</label>
-          <textarea id="msg" placeholder="Votre message, demande de code bêta, collaboration…"></textarea>
-        </div>
-
-        <div class="form-check">
-          <input type="checkbox" id="optin"/>
-          <span>J'accepte de recevoir des nouvelles de LOCOMORTIS par e-mail. Désabonnement à tout moment.</span>
-        </div>
-
-        <button class="btn-submit" onclick="submitForm()">MONTER À BORD →</button>
+          <button type="button" class="btn-submit" onclick="submitForm()">MONTER À BORD →</button>
       </div>
 
       <!-- Success state -->
@@ -1079,15 +994,54 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--fog)
 
 /* ── Form submit ── */
 function submitForm(){
-  const email = document.getElementById('email').value.trim();
+  const emailEl = document.getElementById('email');
+  const email = emailEl.value.trim();
   if(!email || !email.includes('@')){
-    document.getElementById('email').focus();
-    document.getElementById('email').style.borderColor='var(--rust)';
+    emailEl.focus();
+    emailEl.style.borderColor='var(--rust)';
     return;
   }
-  document.getElementById('formWrap').style.display='none';
-  document.getElementById('formSuccess').classList.add('show');
+
+  const fname = document.getElementById('fname').value.trim();
+  const lname = document.getElementById('lname').value.trim();
+  const msg = document.getElementById('msg').value.trim();
+  const name = (fname + ' ' + lname).trim() || email;
+
+  const payload = {
+    access_key: '4e32d8ed-4286-4d42-95d3-7f6b88798940',
+    name: name,
+    email: email,
+    message: msg
+  };
+
+  const btn = document.querySelector('.btn-submit');
+  btn.disabled = true; btn.style.opacity = '.7'; btn.textContent = 'ENVOI...';
+
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(json => {
+    if(json.success || json.success === true){
+      document.getElementById('formWrap').style.display='none';
+      document.getElementById('formSuccess').classList.add('show');
+    } else {
+      throw new Error(json.message || 'Submission failed');
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert('Une erreur est survenue lors de l\'envoi. Réessayez plus tard.');
+  })
+  .finally(()=>{ btn.disabled = false; btn.style.opacity=''; btn.textContent = 'MONTER À BORD →'; });
 }
+
+// prevent native form submission if user presses Enter
+document.getElementById('prelaunchForm')?.addEventListener('submit', function(e){
+  e.preventDefault(); submitForm();
+});
 
 /* ── Speed readout flicker ── */
 const spd = document.querySelector('.speed-val');
