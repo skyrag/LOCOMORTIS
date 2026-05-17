@@ -3,17 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="LOCOMORTIS — Roguelite mobile sombre et immersif : survivez à bord d'un train en mouvement, améliorez votre convoi et rejoignez la communauté. Bientôt sur iOS & Android.">
+  <meta name="robots" content="index, follow">
 <title>LOCOMORTIS — Roguelite mobile</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 :root{
   --rust:#C0401A;--rust2:#8B2A0E;--rust-g:rgba(192,64,26,.35);
-  --coal:#0C0B09;--smoke:#161410;--ash:#2A2824;--fog:#46433E;
-  --pale:#ADA79A;--cream:#E6DDC8;--warn:#C9980F;--green:#3A6B20;
+  --coal:#0C0B09;--smoke:#161410;--ash:#2A2824;--fog:#7a7670; /* increased contrast */
+  --pale:#BFB7AA;--cream:#E6DDC8;--warn:#C9980F;--green:#3A6B20;
 }
 html{scroll-behavior:smooth;}
 body{background:var(--coal);color:var(--cream);font-family:'Barlow Condensed',sans-serif;overflow-x:hidden;}
+
+/* Skip link for keyboard users */
+.skip-link{position:absolute;left:-999px;top:auto;background:var(--cream);color:var(--coal);padding:8px 12px;z-index:999;}
+.skip-link:focus{left:16px;top:12px;border-radius:4px;}
+
+/* Visible focus outlines for keyboard navigation */
+button:focus, a:focus, input:focus, textarea:focus, select:focus{outline:3px solid var(--rust);outline-offset:2px}
+
+/* Improve low-contrast text */
+.nav-links a{color:var(--pale);} 
+.feat-p,.ci-label,.store-sub{color:var(--pale);} 
+.form-check label{font-size:13px;font-weight:300;color:var(--pale);line-height:1.5;cursor:pointer;}
 
 /* ══════════════════ NAV ══════════════════ */
 nav{
@@ -481,19 +495,20 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--fog)
 </style>
 </head>
 <body>
+  <a class="skip-link" href="#maincontent">Aller au contenu principal</a>
 
 <!-- NAV -->
 <nav>
   <div class="nav-logo">LOCOMORTIS</div>
   <div class="nav-links">
     <a href="#features">Gameplay</a>
-    <a href="#ambiance">Univers</a>
     <a href="#contact">Contact</a>
   </div>
-  <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Rejoindre notre communauté</button>
+  <button type="button" class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Rejoindre notre communauté</button>
 </nav>
 
 <!-- ══════════════════════════════════ HERO ══════════════════════════════════ -->
+<main id="maincontent">
 <section id="hero">
   <div id="track-bg">
     <div class="rail-v r1"></div>
@@ -510,7 +525,7 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--fog)
         Le monde est mort. Le train roule encore. À bord de ce dernier rempart d'acier, vous êtes responsable de tout — et de tout le monde.
       </p>
       <div class="hero-cta">
-        <button class="btn-p" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Nous contacter</button>
+        <button type="button" class="btn-p" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Nous contacter</button>
       </div>
     </div>
 
@@ -881,8 +896,8 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--fog)
     <!-- RIGHT: form -->
     <div class="contact-form">
       <div id="formWrap">
-        <div class="form-title">Contact</div>
-        <form action="https://api.web3forms.com/submit" method="POST">
+        <div id="formTitle" class="form-title">Contact</div>
+        <form id="prelaunchForm" aria-labelledby="formTitle" action="https://api.web3forms.com/submit" method="POST">
           
           <div class="form-row">
             <div class="form-group">
@@ -909,9 +924,9 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--fog)
           <input type="hidden" name="access_key" value="4e32d8ed-4286-4d42-95d3-7f6b88798940">
 
           <div class="form-check">
-            <input type="checkbox" id="optin"/>
-            <span>J'accepte de recevoir des nouvelles de LOCOMORTIS par e-mail. Désabonnement à tout moment.</span>
-        </div>
+            <input type="checkbox" id="optin" name="optin" />
+            <label for="optin">J'accepte de recevoir des nouvelles de LOCOMORTIS par e-mail. Désabonnement à tout moment.</label>
+          </div>
 
           </form>
 
@@ -951,6 +966,8 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--fog)
     </div>
   </div>
 </section>
+<!-- FOOTER -->
+  </main>
 
 <!-- FOOTER -->
 <footer>
